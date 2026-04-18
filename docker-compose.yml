@@ -1,0 +1,41 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: admin-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: admin
+    ports:
+      - '3307:3306'
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+
+  server:
+    build:
+      context: .
+      dockerfile: apps/admin-server/Dockerfile
+    container_name: admin-server
+    restart: always
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: admin
+    depends_on:
+      - mysql
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/admin-web/Dockerfile
+    container_name: admin-web
+    ports:
+      - '80:80'
+    depends_on:
+      - server
