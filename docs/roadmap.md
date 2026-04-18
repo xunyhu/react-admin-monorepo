@@ -17,4 +17,3 @@
 
 - WebSocket 实时数据
 - 微前端拆分
-- Docker 部署
