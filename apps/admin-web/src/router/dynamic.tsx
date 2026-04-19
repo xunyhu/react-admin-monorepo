@@ -4,6 +4,7 @@ import Login from '@/pages/login';
 import Page404 from '@/pages/404';
 import { generateRoutes } from './map';
 import RolePermissionPage from '@/pages/role/RolePermissionPage';
+import RequireAuth from '@/components/RequireAuth';
 
 export function createAppRouter(menus: any[]) {
   const dynamicRoutes = (generateRoutes(menus || []) || []).filter(
@@ -17,7 +18,11 @@ export function createAppRouter(menus: any[]) {
     },
     {
       path: '/',
-      element: <Layout />,
+      element: (
+        <RequireAuth>
+          <Layout />
+        </RequireAuth>
+      ),
       children: [
         {
           index: true,
