@@ -4,8 +4,6 @@ import { getToken } from './auth';
 
 const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
 
-console.log('API Base URL:', apiBaseURL);
-
 const request = axios.create({
   baseURL: apiBaseURL,
   timeout: 10000,

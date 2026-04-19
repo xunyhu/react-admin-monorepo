@@ -39,8 +39,7 @@ class UserService {
         code: 403,
       });
     }
-    return await UserModel.findById(id);
-    // return await UserModel.delete(id);
+    return await UserModel.delete(id);
   }
 
   async getUserPermissions(userId: number) {

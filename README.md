@@ -44,6 +44,7 @@ react-admin-monorepo/
 ### 1️⃣ 安装依赖
 
 ```bash
+npm install pnpm -g
 pnpm install
 ```
 

@@ -29,7 +29,7 @@ export function createAppRouter(menus: any[]) {
           element: <Navigate to="/dashboard" replace />,
         },
         {
-          path: '/role-permission/:roleId',
+          path: '/system/role/:roleId',
           element: <RolePermissionPage />,
         },
         ...dynamicRoutes,

@@ -46,6 +46,7 @@ export const UserModel = {
     username: string;
     password: string;
     email?: string;
+    role: number;
   }) {
     const result = await query<any>(
       `
@@ -55,7 +56,14 @@ export const UserModel = {
       [user.name, user.username, user.password, user.email]
     );
 
-    return result.insertId;
+    const userId = result.insertId;
+
+    await query(`INSERT INTO user_role (user_id, role_id) VALUES (?, ?)`, [
+      userId,
+      user.role,
+    ]);
+
+    return userId;
   },
   // 删
   async delete(id: number) {
@@ -131,12 +139,18 @@ export const UserModel = {
     // 查询列表
     const list = await query<any[]>(
       `
-        SELECT id, name, username, email, status, created_at
-        FROM users
-        ${where}
-        ORDER BY id DESC
-        LIMIT ? OFFSET ?
-      `,
+    SELECT 
+      u.id, u.name, u.username, u.email, u.status, u.created_at,
+      GROUP_CONCAT(r.name SEPARATOR ',') AS role_name,
+      GROUP_CONCAT(r.id SEPARATOR ',') AS role_id
+    FROM users u
+    LEFT JOIN user_role ur ON ur.user_id = u.id
+    LEFT JOIN roles r ON ur.role_id = r.id
+    ${where}
+    GROUP BY u.id
+    ORDER BY u.id DESC
+    LIMIT ? OFFSET ?
+    `,
       [...values, pageSize, offset]
     );
 

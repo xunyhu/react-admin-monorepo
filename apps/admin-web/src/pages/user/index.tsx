@@ -13,6 +13,7 @@ import {
 import dayjs from 'dayjs';
 
 import { getUsers, addUser, deleteUser, updateUser } from '@/api/user';
+import { getRoles } from '@/api/role';
 
 export default function UserPage() {
   const [list, setList] = useState<any[]>([]);
@@ -29,6 +30,8 @@ export default function UserPage() {
 
   const [form] = Form.useForm();
 
+  const [roles, setRoles] = useState<any[]>([]);
+
   const loadData = async (p = page, ps = pageSize) => {
     setLoading(true);
 
@@ -36,7 +39,7 @@ export default function UserPage() {
       const res = await getUsers({
         page: p,
         pageSize: ps,
-        keyword,
+        username: keyword,
       });
 
       setList(res.data.list);
@@ -46,8 +49,19 @@ export default function UserPage() {
     }
   };
 
+  const fetchRoles = async () => {
+    const res = await getRoles();
+    setRoles(
+      res.data.map((i) => ({
+        label: i.name,
+        value: i.id,
+      }))
+    );
+  };
+
   useEffect(() => {
     loadData(1, pageSize);
+    fetchRoles();
   }, []);
 
   const handleAddOrEdit = async () => {
@@ -83,6 +97,12 @@ export default function UserPage() {
     loadData();
   };
 
+  const handleSearch = (val) => {
+    setKeyword(val);
+    setPage(1);
+    loadData(1, pageSize);
+  };
+
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 80 },
 
@@ -91,13 +111,10 @@ export default function UserPage() {
     { title: '邮箱', dataIndex: 'email' },
 
     {
-      title: '状态',
-      dataIndex: 'status',
-      render: (status: number) => (
-        <Tag color={status === 1 ? 'green' : 'red'}>
-          {status === 1 ? '正常' : '禁用'}
-        </Tag>
-      ),
+      title: '角色',
+      dataIndex: 'role_name',
+      width: 150,
+      render: (text) => <Tag color="blue">{text}</Tag>,
     },
 
     {
@@ -127,7 +144,7 @@ export default function UserPage() {
                 username: record.username,
                 email: record.email,
                 name: record.name,
-                role: record.role,
+                role: record.role_name,
               });
             }}
           >
@@ -150,13 +167,15 @@ export default function UserPage() {
         </Button>
 
         <Input.Search
-          placeholder="用户名 / 邮箱"
+          placeholder="用户名"
           allowClear
           style={{ width: 260 }}
-          onSearch={(val) => {
-            setKeyword(val);
-            setPage(1);
-            loadData(1, pageSize);
+          onSearch={handleSearch}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '') {
+              handleSearch(val);
+            }
           }}
         />
       </Space>
@@ -211,14 +230,8 @@ export default function UserPage() {
             <Input />
           </Form.Item>
 
-          <Form.Item name="role" label="角色">
-            <Select
-              options={[
-                { label: '管理员', value: 'admin' },
-                { label: '编辑', value: 'editor' },
-                { label: '访客', value: 'viewer' },
-              ]}
-            />
+          <Form.Item name="role" label="角色" required>
+            <Select options={roles} />
           </Form.Item>
         </Form>
       </Modal>

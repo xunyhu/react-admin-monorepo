@@ -45,9 +45,9 @@ export const getRoleMenus = async (req: Request, res: Response) => {
 
 export const saveRoleMenus = async (req: Request, res: Response) => {
   const roleId = Number(req.params.roleId);
-  const { menu_ids } = req.body;
+  const { menuIds } = req.body;
 
-  await RoleService.saveMenus(roleId, menu_ids || []);
+  await RoleService.saveMenus(roleId, menuIds || []);
 
   res.json({
     code: 200,

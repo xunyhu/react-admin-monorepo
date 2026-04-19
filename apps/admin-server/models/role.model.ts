@@ -50,10 +50,13 @@ export const RoleModel = {
       `SELECT menu_id FROM role_menu WHERE role_id = ?`,
       [roleId]
     );
+    // console.log('roleId', roleId);
+    // console.log('rows', rows);
     return rows.map((r: { menu_id: number }) => r.menu_id);
   },
 
   async saveMenus(roleId: number, menuIds: number[]) {
+    // console.log(roleId, menuIds);
     await query(`DELETE FROM role_menu WHERE role_id = ?`, [roleId]);
     if (menuIds.length) {
       const values = menuIds.map((id) => [roleId, id]);

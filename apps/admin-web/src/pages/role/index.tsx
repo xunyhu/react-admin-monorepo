@@ -121,16 +121,21 @@ export default function RoleListPage() {
             render: (count) => <span>{count || 0} 人</span>,
           },
           {
+            title: '角色描述',
+            dataIndex: 'description',
+            width: 300,
+          },
+          {
             title: '操作',
             render: (_, record) => (
               <Space>
-                <Button type="link" onClick={() => openModal(record)}>
+                {/* <Button type="link" onClick={() => openModal(record)}>
                   编辑
-                </Button>
+                </Button> */}
 
                 <Button
                   type="link"
-                  onClick={() => navigate(`/role-permission/${record.id}`)}
+                  onClick={() => navigate(`/system/role/${record.id}`)}
                 >
                   权限
                 </Button>
@@ -162,6 +167,14 @@ export default function RoleListPage() {
 
           <Form.Item label="角色标识" name="code" rules={[{ required: true }]}>
             <Input placeholder="如：admin / editor" />
+          </Form.Item>
+
+          <Form.Item
+            label="角色描述"
+            name="description"
+            rules={[{ required: true }]}
+          >
+            <Input />
           </Form.Item>
         </Form>
       </Modal>
