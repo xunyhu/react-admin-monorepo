@@ -2,7 +2,9 @@ import axios from 'axios';
 import { message } from 'antd';
 import { getToken } from './auth';
 
-const apiBaseURL = import.meta.env.VITE_API_BASE_URL || '/api';
+const apiBaseURL = import.meta.env.VITE_API_BASE_URL;
+
+console.log('API Base URL:', apiBaseURL);
 
 const request = axios.create({
   baseURL: apiBaseURL,
