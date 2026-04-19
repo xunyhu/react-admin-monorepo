@@ -1,10 +1,14 @@
 import mysql, { Pool } from 'mysql2/promise';
 
-const poolHost = process.env.DB_HOST || 'localhost';
-const poolPort = Number(process.env.DB_PORT || 3306);
-const poolUser = process.env.DB_USER || 'root';
-const poolPassword = process.env.DB_PASSWORD || '123456';
-const poolDatabase = process.env.DB_NAME || 'admin_system';
+const poolHost = process.env.DB_HOST!;
+const poolPort = Number(process.env.DB_PORT!);
+const poolUser = process.env.DB_USER!;
+const poolPassword = process.env.DB_PASSWORD!;
+const poolDatabase = process.env.DB_NAME!;
+
+if (!poolHost || !poolPort || !poolUser || !poolDatabase) {
+  throw new Error('❌ 数据库环境变量未配置完整');
+}
 
 const pool: Pool = mysql.createPool({
   host: poolHost,
@@ -15,6 +19,16 @@ const pool: Pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
 });
+
+pool
+  .getConnection()
+  .then((conn) => {
+    console.log('✅ MySQL connected:', poolHost, poolDatabase);
+    conn.release();
+  })
+  .catch((err) => {
+    console.error('❌ MySQL connection failed:', err.message);
+  });
 
 export const query = async <T = any>(
   sql: string,

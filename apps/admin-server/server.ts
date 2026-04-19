@@ -1,7 +1,13 @@
-import app from './app'
+import dotenv from 'dotenv';
 
-const port = Number(process.env.PORT || 3001)
+dotenv.config({
+  path: './.env',
+});
+
+import app from './app';
+
+const port = Number(process.env.PORT || 3001);
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`server running http://0.0.0.0:${port}`)
-})
+  console.log(`server running http://0.0.0.0:${port}`);
+});
