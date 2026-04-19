@@ -23,6 +23,9 @@ let isRedirecting = false;
 function redirectToLogin() {
   if (isRedirecting) return;
 
+  const isLoginPage = window.location.pathname === '/login';
+  if (isLoginPage) return;
+
   isRedirecting = true;
 
   localStorage.removeItem('token');
