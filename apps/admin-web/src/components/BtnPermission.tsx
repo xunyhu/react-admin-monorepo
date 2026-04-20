@@ -1,14 +1,18 @@
-import { Navigate } from 'react-router-dom';
 import { hasPermission } from '@/utils/permission';
 
 interface Props {
   code: string;
   children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
-export default function RequirePermission({ code, children }: Props) {
+export default function BtnPermission({
+  code,
+  children,
+  fallback = null,
+}: Props) {
   if (!hasPermission(code)) {
-    return <Navigate to="/403" replace />;
+    return <>{fallback}</>;
   }
 
   return <>{children}</>;

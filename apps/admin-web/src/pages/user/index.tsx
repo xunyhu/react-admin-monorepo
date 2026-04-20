@@ -15,6 +15,8 @@ import dayjs from 'dayjs';
 import { getUsers, addUser, deleteUser, updateUser } from '@/api/user';
 import { getRoles } from '@/api/role';
 
+import BtnPermission from '@/components/BtnPermission';
+
 export default function UserPage() {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -134,25 +136,29 @@ export default function UserPage() {
       width: 220,
       render: (_: any, record: any) => (
         <Space>
-          <Button
-            type="link"
-            onClick={() => {
-              setOpen(true);
-              setEditId(record.id);
+          <BtnPermission code="user:edit">
+            <Button
+              type="link"
+              onClick={() => {
+                setOpen(true);
+                setEditId(record.id);
 
-              form.setFieldsValue({
-                username: record.username,
-                email: record.email,
-                name: record.name,
-                role: record.role_name,
-              });
-            }}
-          >
-            编辑
-          </Button>
-          <Button danger type="link" onClick={() => handleDelete(record.id)}>
-            删除
-          </Button>
+                form.setFieldsValue({
+                  username: record.username,
+                  email: record.email,
+                  name: record.name,
+                  role: record.role_name,
+                });
+              }}
+            >
+              编辑
+            </Button>
+          </BtnPermission>
+          <BtnPermission code="user:delete">
+            <Button danger type="link" onClick={() => handleDelete(record.id)}>
+              删除
+            </Button>
+          </BtnPermission>
         </Space>
       ),
     },
@@ -162,9 +168,11 @@ export default function UserPage() {
     <div>
       {/* 顶部操作栏 */}
       <Space style={{ marginBottom: 16 }}>
-        <Button type="primary" onClick={() => setOpen(true)}>
-          新增用户
-        </Button>
+        <BtnPermission code="user:add">
+          <Button type="primary" onClick={() => setOpen(true)}>
+            新增用户
+          </Button>
+        </BtnPermission>
 
         <Input.Search
           placeholder="用户名"

@@ -1,14 +1,14 @@
+import { Navigate } from 'react-router-dom';
 import { hasPermission } from '@/utils/permission';
 
 interface Props {
   code: string;
   children: React.ReactNode;
-  fallback?: React.ReactNode;
 }
 
-export default function Permission({ code, children, fallback = null }: Props) {
+export default function PagePermission({ code, children }: Props) {
   if (!hasPermission(code)) {
-    return <>{fallback}</>;
+    return <Navigate to="/403" replace />;
   }
 
   return <>{children}</>;
