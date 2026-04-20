@@ -42,37 +42,63 @@ export const MenuModel = {
     return buildTree(list);
   },
 
-  create(data: any) {
-    return query(
+  async create(data: any) {
+    // 1. 先插入主菜单数据
+    const result = await query(
       `INSERT INTO menus (name, code, path, component, parent_id, type, permission, sort)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         data.name,
-        data.code,
+        data.code || data.permission,
         data.path,
-        data.component,
+        data.component || null,
         data.parent_id || null,
         data.type,
-        data.permission,
+        data.permission || data.code,
         data.sort || 0,
       ]
     );
+
+    // console.log('Inserted Menu ID:', result.insertId);
+
+    // console.log('Menu Data:', data);
+
+    const insertedId = result.insertId;
+
+    if (data.type === 1) {
+      await query(
+        `INSERT INTO menus (name, code, path, component, parent_id, type, permission, sort)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          `${data.name}查看页面`,
+          `${data.code}:view`,
+          data.path,
+          data.component || null,
+          insertedId,
+          2,
+          `${data.permission}:view`,
+          data.sort || 0,
+        ]
+      );
+    }
+
+    return insertedId;
   },
 
   // 更新
   update(id: number, data: any) {
     return query(
       `UPDATE menus
-       SET name=?, code=?, path=?, component=?, parent_id=?, type=?, permission=?, sort=?
+       SET name=?, type=?, code=?, path=?, component=?, parent_id=?, permission=?, sort=?
        WHERE id=?`,
       [
         data.name,
-        data.code,
-        data.path,
-        data.component,
-        data.parent_id || null,
         data.type,
-        data.permission,
+        data.code || data.permission,
+        data.path,
+        data.component || null,
+        data.parent_id || null,
+        data.permission || data.code,
         data.sort || 0,
         id,
       ]

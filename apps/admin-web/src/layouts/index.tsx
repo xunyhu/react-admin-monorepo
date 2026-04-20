@@ -1,17 +1,21 @@
-import { Layout, Menu, Button, Space, Modal } from 'antd';
+import { Layout, Menu, Button, Space, Modal, Typography } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 
-import { clearAllCache } from '@/utils/auth';
+import { clearAllCache, getUserCache } from '@/utils/auth';
 import { useMenuStore } from '@/store/menu';
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 export default function BasicLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const menus = useMenuStore((s) => s.menus);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
+
+  const user = getUserCache();
+  const currentUser = user?.username || '用户';
 
   const normalizedMenus = useMemo(() => {
     const loop = (list: any[], parentPath = ''): any[] =>
@@ -117,12 +121,15 @@ export default function BasicLayout() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '0 16px',
+            padding: '0 24px',
           }}
         >
-          <div style={{ fontWeight: 500 }}>React System</div>
+          <div style={{ fontWeight: 500, fontSize: 16 }}>React System</div>
 
-          <Space>
+          <Space size="middle">
+            <Text type="secondary">
+              欢迎，<Text strong>{currentUser}</Text>
+            </Text>
             <Button type="link" onClick={handleLogout}>
               退出登录
             </Button>

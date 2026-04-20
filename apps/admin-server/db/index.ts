@@ -34,8 +34,14 @@ export const query = async <T = any>(
   sql: string,
   params: any[] = []
 ): Promise<T> => {
-  const [rows] = await pool.query(sql, params);
-  return rows as T;
+  try {
+    const [rows] = await pool.query(sql, params);
+    console.log('SQL 执行成功');
+    return rows as T;
+  } catch (error) {
+    console.error('❌ SQL 执行失败:', error);
+    throw error;
+  }
 };
 
 export default pool as mysql.Pool;
