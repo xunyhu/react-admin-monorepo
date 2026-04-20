@@ -5,3 +5,5 @@ node_modules/
 **/**/dist/
 
 /apps/admin-server/.env
+
+.cursor/*.log

@@ -12,6 +12,6 @@ export function updateMenu(id: number, data: any) {
   return request.put(`/menus/${id}`, data);
 }
 
-export function deleteMenu(id: number) {
-  return request.delete(`/menus/${id}`);
+export function deleteMenu(ids: number[]) {
+  return request.delete(`/menus`, { data: { ids } });
 }

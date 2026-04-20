@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { setToken, setUserCache, setPermissionCache } from '@/utils/auth';
+import { setToken, setUserCache, setPermissionCache, setRoleCache } from '@/utils/auth';
 
 export const useAuthStore = create<any>((set) => ({
   token: null,
@@ -18,6 +18,7 @@ export const useAuthStore = create<any>((set) => ({
     setToken(data.token);
     setUserCache(data.user);
     setPermissionCache(data.permissions);
+    setRoleCache(data.roles || []);
   },
 
   hydrate: (cache: any) => {

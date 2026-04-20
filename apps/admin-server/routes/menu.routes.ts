@@ -13,6 +13,7 @@ router.get('/tree', getMenuTree);
 router.get('/', getMenus);
 router.post('/', createMenu);
 router.put('/:id', updateMenu);
+router.delete('/', deleteMenu);
 router.delete('/:id', deleteMenu);
 
 export default router;

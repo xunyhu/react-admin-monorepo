@@ -39,9 +39,22 @@ export const updateMenu = async (req: Request, res: Response) => {
 };
 
 export const deleteMenu = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+  const rawIds = (req.body as any)?.ids;
+  const fromBodyIds: number[] = Array.isArray(rawIds)
+    ? rawIds.map((x) => Number(x)).filter((x) => Number.isFinite(x))
+    : [];
 
-  await MenuService.deleteMenu(id);
+  const idParam = req.params.id;
+  const fromParamId = idParam !== undefined ? Number(idParam) : undefined;
+
+  const ids =
+    fromBodyIds.length > 0
+      ? fromBodyIds
+      : Number.isFinite(fromParamId)
+        ? [fromParamId as number]
+        : [];
+
+  await MenuService.deleteMenus(ids);
 
   res.json({
     code: 200,

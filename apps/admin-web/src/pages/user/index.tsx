@@ -16,6 +16,7 @@ import { getUsers, addUser, deleteUser, updateUser } from '@/api/user';
 import { getRoles } from '@/api/role';
 
 import BtnPermission from '@/components/BtnPermission';
+import PageHeader from '@/components/PageHeader';
 
 export default function UserPage() {
   const [list, setList] = useState<any[]>([]);
@@ -54,7 +55,7 @@ export default function UserPage() {
   const fetchRoles = async () => {
     const res = await getRoles();
     setRoles(
-      res.data.map((i) => ({
+      res.data.map((i: any) => ({
         label: i.name,
         value: i.id,
       }))
@@ -99,7 +100,7 @@ export default function UserPage() {
     loadData();
   };
 
-  const handleSearch = (val) => {
+  const handleSearch = (val: string) => {
     setKeyword(val);
     setPage(1);
     loadData(1, pageSize);
@@ -116,7 +117,7 @@ export default function UserPage() {
       title: '角色',
       dataIndex: 'role_name',
       width: 150,
-      render: (text) => <Tag color="blue">{text}</Tag>,
+      render: (text: any) => <Tag color="blue">{text}</Tag>,
     },
 
     {
@@ -165,28 +166,32 @@ export default function UserPage() {
   ];
 
   return (
-    <div>
-      {/* 顶部操作栏 */}
-      <Space style={{ marginBottom: 16 }}>
-        <BtnPermission code="user:add">
-          <Button type="primary" onClick={() => setOpen(true)}>
-            新增用户
-          </Button>
-        </BtnPermission>
+    <div style={{ padding: 6 }}>
+      <PageHeader
+        title="用户管理"
+        extra={
+          <Space>
+            <BtnPermission code="user:add">
+              <Button type="primary" onClick={() => setOpen(true)}>
+                新增用户
+              </Button>
+            </BtnPermission>
 
-        <Input.Search
-          placeholder="用户名"
-          allowClear
-          style={{ width: 260 }}
-          onSearch={handleSearch}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (val === '') {
-              handleSearch(val);
-            }
-          }}
-        />
-      </Space>
+            <Input.Search
+              placeholder="用户名"
+              allowClear
+              style={{ width: 260 }}
+              onSearch={handleSearch}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '') {
+                  handleSearch(val);
+                }
+              }}
+            />
+          </Space>
+        }
+      />
 
       {/* 表格 */}
       <Table

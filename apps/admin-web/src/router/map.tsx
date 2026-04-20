@@ -2,12 +2,14 @@ import Dashboard from '@/pages/dashboard';
 import User from '@/pages/user';
 import Role from '@/pages/role';
 import Menu from '@/pages/menu';
+import PageDesign from '@/pages/pageDesign';
 
 const componentMap: Record<string, any> = {
   dashboard: Dashboard,
   user: User,
   role: Role,
   menu: Menu,
+  pageDesign: PageDesign,
 };
 
 export function generateRoutes(menus: any[]) {

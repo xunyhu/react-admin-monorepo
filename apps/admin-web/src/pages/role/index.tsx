@@ -8,6 +8,7 @@ import {
   getRoleUserCount,
 } from '@/api/role';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from '@/components/PageHeader';
 
 export default function RoleListPage() {
   const [roles, setRoles] = useState<any[]>([]);
@@ -80,21 +81,15 @@ export default function RoleListPage() {
   };
 
   return (
-    <div>
-      {/* 顶部标题 + 新增按钮 */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: 16,
-        }}
-      >
-        <h2 style={{ margin: 0 }}>角色管理</h2>
-
-        <Button type="primary" onClick={() => openModal()}>
-          + 新增角色
-        </Button>
-      </div>
+    <div style={{ padding: 6 }}>
+      <PageHeader
+        title="角色管理"
+        extra={
+          <Button type="primary" onClick={() => openModal()}>
+            + 新增角色
+          </Button>
+        }
+      />
 
       {/* 表格 */}
       <Table

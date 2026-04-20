@@ -5,8 +5,9 @@ import { useEffect, useState } from 'react';
 import { createAppRouter } from '@/router/dynamic';
 
 import { useMenuStore } from '@/store/menu';
+import { useAuthStore } from '@/store/auth';
 
-import { getMenuCache, getToken } from '@/utils/auth';
+import { getMenuCache, getPermissionCache, getRoleCache, getToken, getUserCache } from '@/utils/auth';
 import 'antd/dist/reset.css';
 
 function App() {
@@ -22,6 +23,13 @@ function App() {
       setRouter(createAppRouter([]));
       return;
     }
+
+    useAuthStore.getState().hydrate({
+      token,
+      user: getUserCache(),
+      roles: getRoleCache(),
+      permissions: getPermissionCache(),
+    });
 
     const cachedMenus = getMenuCache();
 

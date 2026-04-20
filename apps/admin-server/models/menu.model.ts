@@ -59,14 +59,16 @@ export const MenuModel = {
       ]
     );
 
-    // console.log('Inserted Menu ID:', result.insertId);
-
-    // console.log('Menu Data:', data);
-
     const insertedId = result.insertId;
 
+    // 新增菜单后，默认赋给超级管理员角色（role_id = 1）
+    await query(`INSERT INTO role_menu (role_id, menu_id) VALUES (?, ?)`, [
+      1,
+      insertedId,
+    ]);
+
     if (data.type === 1) {
-      await query(
+      const viewResult = await query(
         `INSERT INTO menus (name, code, path, component, parent_id, type, permission, sort)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -80,6 +82,12 @@ export const MenuModel = {
           data.sort || 0,
         ]
       );
+
+      const viewInsertedId = (viewResult as any).insertId;
+      await query(`INSERT INTO role_menu (role_id, menu_id) VALUES (?, ?)`, [
+        1,
+        viewInsertedId,
+      ]);
     }
 
     return insertedId;
@@ -110,14 +118,16 @@ export const MenuModel = {
     return query(`DELETE FROM menus WHERE id=?`, [id]);
   },
 
-  async deleteMenu(id: number) {
-    // 1. 删除子菜单
-    await query(`DELETE FROM menus WHERE parent_id = ?`, [id]);
+  async deleteMenus(ids: number[]) {
+    const uniqueIds = Array.from(
+      new Set(ids.map((x) => Number(x)).filter((x) => Number.isFinite(x)))
+    );
 
-    // 2. 删除自己
-    await MenuModel.delete(id);
+    if (uniqueIds.length === 0) return;
 
-    // 3. 清理 role_menu（避免脏数据）
-    await query(`DELETE FROM role_menu WHERE menu_id = ?`, [id]);
+    // 1) 先清理 role_menu，避免外键/脏数据
+    await query(`DELETE FROM role_menu WHERE menu_id IN (?)`, [uniqueIds]);
+    // 2) 再删除 menus
+    await query(`DELETE FROM menus WHERE id IN (?)`, [uniqueIds]);
   },
 };

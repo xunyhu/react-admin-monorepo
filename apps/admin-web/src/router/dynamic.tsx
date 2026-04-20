@@ -4,6 +4,7 @@ import Login from '@/pages/login';
 import Page404 from '@/pages/404';
 import { generateRoutes } from './map';
 import RolePermissionPage from '@/pages/role/RolePermissionPage';
+import PageDesignCreatePage from '@/pages/pageDesign/create';
 import RequireAuth from '@/components/RequireAuth';
 
 export function createAppRouter(menus: any[]) {
@@ -27,6 +28,10 @@ export function createAppRouter(menus: any[]) {
         {
           index: true,
           element: <Navigate to="/dashboard" replace />,
+        },
+        {
+          path: '/pageDesign/create',
+          element: <PageDesignCreatePage />,
         },
         {
           path: '/system/role/:roleId',

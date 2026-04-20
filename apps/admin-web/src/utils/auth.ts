@@ -28,6 +28,15 @@ export const getPermissionCache = () => {
   return data ? JSON.parse(data) : [];
 };
 
+export const setRoleCache = (roles: string[]) => {
+  localStorage.setItem(ROLE_KEY, JSON.stringify(roles));
+};
+
+export const getRoleCache = () => {
+  const data = localStorage.getItem(ROLE_KEY);
+  return data ? JSON.parse(data) : [];
+};
+
 export const setMenuCache = (menus: any[]) => {
   localStorage.setItem(MENU_KEY, JSON.stringify(menus));
 };

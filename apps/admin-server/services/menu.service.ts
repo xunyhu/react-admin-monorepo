@@ -18,8 +18,8 @@ export const MenuService = {
     return await MenuModel.update(id, data);
   },
 
-  async deleteMenu(id: number) {
-    await MenuModel.deleteMenu(id);
+  async deleteMenus(ids: number[]) {
+    await MenuModel.deleteMenus(ids);
     return true;
   },
 };

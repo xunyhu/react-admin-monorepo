@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import { useEffect, useState } from 'react';
 import { getMenus, createMenu, updateMenu, deleteMenu } from '@/api/menu';
+import PageHeader from '@/components/PageHeader';
 
 export default function MenuPage() {
   const [menus, setMenus] = useState<any[]>([]);
@@ -37,7 +38,8 @@ export default function MenuPage() {
 
     // 先转成 map
     list.forEach((item) => {
-      map.set(item.id, { ...item, key: item.id, children: [] });
+      // 注意：不要给所有节点默认 children: []，否则无子节点也会被 Table 认为可展开
+      map.set(item.id, { ...item, key: item.id });
     });
 
     // 组装树
@@ -48,6 +50,7 @@ export default function MenuPage() {
       } else {
         const parent = map.get(item.parent_id);
         if (parent) {
+          if (!parent.children) parent.children = [];
           parent.children.push(node);
         } else {
           roots.push(node);
@@ -65,6 +68,18 @@ export default function MenuPage() {
       });
     };
     sortChildren(roots);
+
+    // 清理空 children，避免展示无意义的展开按钮
+    const pruneEmptyChildren = (nodes: any[]) => {
+      nodes.forEach((n) => {
+        if (Array.isArray(n.children) && n.children.length) {
+          pruneEmptyChildren(n.children);
+        } else {
+          delete n.children;
+        }
+      });
+    };
+    pruneEmptyChildren(roots);
 
     return roots;
   };
@@ -124,8 +139,22 @@ export default function MenuPage() {
     load();
   };
 
-  const handleDelete = async (id: number) => {
-    await deleteMenu(id);
+  const collectIdsDeep = (node: any): number[] => {
+    const ids: number[] = [];
+    const dfs = (n: any) => {
+      if (!n) return;
+      if (typeof n.id === 'number') ids.push(n.id);
+      if (Array.isArray(n.children) && n.children.length) {
+        n.children.forEach((c: any) => dfs(c));
+      }
+    };
+    dfs(node);
+    return Array.from(new Set(ids));
+  };
+
+  const handleDelete = async (record: any) => {
+    const ids = collectIdsDeep(record);
+    await deleteMenu(ids);
     message.success('删除成功');
     load();
   };
@@ -139,27 +168,25 @@ export default function MenuPage() {
   const treeData = getTreeData(menus);
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: 16,
-        }}
-      >
-        <h2 style={{ margin: 0 }}>菜单管理</h2>
-
-        <Button type="primary" onClick={() => openModal()}>
-          + 新增根菜单
-        </Button>
-      </div>
+    <div style={{ padding: 6 }}>
+      <PageHeader
+        title="菜单管理"
+        extra={
+          <Button type="primary" onClick={() => openModal()}>
+            + 新增根菜单
+          </Button>
+        }
+      />
 
       {/* 树形表格 */}
       <Table
         rowKey="id"
         dataSource={treeData}
         pagination={false}
+        expandable={{
+          rowExpandable: (record) =>
+            Array.isArray(record.children) && record.children.length > 0,
+        }}
         columns={[
           {
             title: '名称',
@@ -257,7 +284,7 @@ export default function MenuPage() {
                       ? `该菜单下有 ${record.children.length} 个子项，删除后子项也将被删除，确定继续吗？`
                       : '删除后不可恢复'
                   }
-                  onConfirm={() => handleDelete(record.id)}
+                  onConfirm={() => handleDelete(record)}
                   okText="确定"
                   cancelText="取消"
                 >
