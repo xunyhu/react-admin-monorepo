@@ -1,7 +1,8 @@
 import { Button, Space, Table, Tag } from 'antd';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
+import { getDesignPages } from '@/api/design';
 
 type PageDesign = {
   id: string;
@@ -11,21 +12,21 @@ type PageDesign = {
   updatedAt: number;
 };
 
-function loadPageDesigns(): PageDesign[] {
-  try {
-    const raw = localStorage.getItem('pageDesigns');
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as PageDesign[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
 export default function PageDesignListPage() {
   const navigate = useNavigate();
 
-  const data = useMemo(() => loadPageDesigns(), []);
+  const [data, setData] = useState<PageDesign[]>([]);
+
+  useEffect(() => {
+    getDesignPages({ page: 1, pageSize: 200 })
+      .then((res: any) => {
+        const list = (res?.data?.list || []) as PageDesign[];
+        setData(list);
+      })
+      .catch(() => {
+        setData([]);
+      });
+  }, []);
 
   return (
     <div style={{ padding: 6 }}>

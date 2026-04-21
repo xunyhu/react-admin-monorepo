@@ -8,9 +8,10 @@ export const errorMiddleware = (
 ) => {
   console.error('🔥 server error:', err);
 
-  res.status(500).json({
-    code: 500,
-    message: err.message || '服务器内部错误',
+  const status = Number(err?.status) || 500;
+  res.status(status).json({
+    code: status,
+    message: err?.message || '服务器内部错误',
     data: null,
   });
 };

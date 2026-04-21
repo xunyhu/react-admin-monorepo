@@ -18,6 +18,14 @@ export function createAppRouter(menus: any[]) {
       element: <Login />,
     },
     {
+      path: '/pageDesign/create',
+      element: (
+        <RequireAuth>
+          <PageDesignCreatePage />
+        </RequireAuth>
+      ),
+    },
+    {
       path: '/',
       element: (
         <RequireAuth>
@@ -28,10 +36,6 @@ export function createAppRouter(menus: any[]) {
         {
           index: true,
           element: <Navigate to="/dashboard" replace />,
-        },
-        {
-          path: '/pageDesign/create',
-          element: <PageDesignCreatePage />,
         },
         {
           path: '/system/role/:roleId',
