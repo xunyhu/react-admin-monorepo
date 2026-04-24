@@ -21,7 +21,9 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: corsOrigin ? corsOrigin.split(',').map((item) => item.trim()) : true,
+    origin: corsOrigin
+      ? corsOrigin.split(',').map((item) => item.trim())
+      : true,
     credentials: true,
   })
 );
@@ -29,6 +31,7 @@ app.use(express.json());
 
 // 公共路由（无需登录）
 app.use('/api', authRoutes);
+app.use('/api/design', designRoutes);
 
 // 鉴权中间件（必须登录）
 app.use(authMiddleware);
@@ -36,7 +39,6 @@ app.use(authMiddleware);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/menus', menuRoutes);
-app.use('/api/design', designRoutes);
 
 // 错误处理
 app.use(errorMiddleware);

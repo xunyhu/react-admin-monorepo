@@ -20,12 +20,7 @@ router.get(
 );
 
 // 详情
-router.get(
-  '/pages/:id',
-  authMiddleware,
-  permissionMiddleware('design:detail'),
-  getPageDesign
-);
+router.get('/pages/:id', getPageDesign);
 
 // 创建
 router.post(
@@ -52,4 +47,3 @@ router.delete(
 );
 
 export default router;
-
