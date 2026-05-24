@@ -15,8 +15,10 @@ export default function PageDesignListPage() {
   const [data, setData] = useState<PageDesign[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     getDesignPages({ page: 1, pageSize: 200 })
       .then((res: any) => {
         const list = (res?.data?.list || []) as PageDesign[];
@@ -24,6 +26,9 @@ export default function PageDesignListPage() {
       })
       .catch(() => {
         setData([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -50,6 +55,7 @@ export default function PageDesignListPage() {
         rowKey="id"
         dataSource={data}
         pagination={false}
+        loading={loading}
         columns={[
           {
             title: '名称',

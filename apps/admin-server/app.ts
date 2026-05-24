@@ -6,6 +6,10 @@ import userRoutes from './routes/user.routes';
 import roleRoutes from './routes/role.routes';
 import menuRoutes from './routes/menu.routes';
 import designRoutes from './routes/design.routes';
+import productRoutes from './routes/product.routes';
+import orderRoutes from './routes/order.routes';
+import memberRoutes from './routes/member.routes';
+import dashboardRoutes from './routes/dashboard.routes';
 
 import { authMiddleware } from './middleware/auth.middleware';
 import { errorMiddleware } from './middleware/error.middleware';
@@ -39,6 +43,10 @@ app.use(authMiddleware);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/menus', menuRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/members', memberRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // 错误处理
 app.use(errorMiddleware);

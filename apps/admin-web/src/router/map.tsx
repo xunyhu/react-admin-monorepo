@@ -3,6 +3,9 @@ import User from '@/pages/user';
 import Role from '@/pages/role';
 import Menu from '@/pages/menu';
 import PageDesign from '@/pages/pageDesign';
+import Product from '@/pages/product';
+import Order from '@/pages/order';
+import Member from '@/pages/member';
 
 const componentMap: Record<string, any> = {
   dashboard: Dashboard,
@@ -10,6 +13,9 @@ const componentMap: Record<string, any> = {
   role: Role,
   menu: Menu,
   pageDesign: PageDesign,
+  product: Product,
+  order: Order,
+  member: Member,
 };
 
 export function generateRoutes(menus: any[]) {

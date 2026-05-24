@@ -19,6 +19,7 @@ export default function MenuPage() {
   const [menus, setMenus] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -27,7 +28,9 @@ export default function MenuPage() {
   }, []);
 
   const load = async () => {
+    setLoading(true);
     const res = await getMenus();
+    setLoading(false);
     setMenus(res.data);
   };
 
@@ -183,6 +186,7 @@ export default function MenuPage() {
         rowKey="id"
         dataSource={treeData}
         pagination={false}
+        loading={loading}
         expandable={{
           rowExpandable: (record) =>
             Array.isArray(record.children) && record.children.length > 0,

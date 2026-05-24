@@ -109,27 +109,15 @@ export default function UserPage() {
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 80 },
 
-    { title: '用户名', dataIndex: 'username' },
+    { title: '用户名', dataIndex: 'username', width: 150 },
 
-    { title: '邮箱', dataIndex: 'email' },
+    { title: '邮箱', dataIndex: 'email', width: 150 },
 
     {
       title: '角色',
       dataIndex: 'role_name',
       width: 150,
       render: (text: any) => <Tag color="blue">{text}</Tag>,
-    },
-
-    {
-      title: '创建时间',
-      dataIndex: 'created_at',
-      render: (t: string) => dayjs(t).format('YYYY-MM-DD HH:mm'),
-    },
-
-    {
-      title: '更新时间',
-      dataIndex: 'updated_at',
-      render: (t: string) => dayjs(t).format('YYYY-MM-DD HH:mm'),
     },
 
     {

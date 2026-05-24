@@ -5,6 +5,8 @@ import Page404 from '@/pages/404';
 import { generateRoutes } from './map';
 import RolePermissionPage from '@/pages/role/RolePermissionPage';
 import PageDesignCreatePage from '@/pages/pageDesign/create';
+import OrderDetailPage from '@/pages/order/detail';
+import MemberDetailPage from '@/pages/member/detail';
 import RequireAuth from '@/components/RequireAuth';
 
 export function createAppRouter(menus: any[]) {
@@ -40,6 +42,14 @@ export function createAppRouter(menus: any[]) {
         {
           path: '/system/role/:roleId',
           element: <RolePermissionPage />,
+        },
+        {
+          path: '/order/detail/:id',
+          element: <OrderDetailPage />,
+        },
+        {
+          path: '/member/detail/:id',
+          element: <MemberDetailPage />,
         },
         ...dynamicRoutes,
       ],

@@ -1,97 +1,117 @@
-import { Card, Col, Row, Typography, Progress } from 'antd';
-import ReactECharts from 'echarts-for-react';
-import { useMemo } from 'react';
+import { Col, Row } from 'antd';
 
-const { Title } = Typography;
+import PageHeader from '@/components/PageHeader';
 
-export default function Dashboard() {
-  const lineOption = useMemo(() => {
-    return {
-      title: { text: '访问趋势' },
-      tooltip: {},
-      xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      yAxis: { type: 'value' },
-      series: [
-        {
-          data: [120, 200, 150, 80, 70, 110, 130],
-          type: 'line',
-          smooth: true,
-        },
-      ],
-    };
-  }, []);
+import CategoryPieChart from './components/CategoryPieChart';
+import LowStockAlert from './components/LowStockAlert';
+import OrderChart from './components/OrderChart';
+import RealtimePanel from './components/RealtimePanel';
+import SalesChart from './components/SalesChart';
+import StatCard from './components/StatCard';
+import TopProductTable from './components/TopProductTable';
+import UserChart from './components/UserChart';
+import { useDashboardCharts } from './hooks/useDashboardCharts';
+import { useDashboardOverview } from './hooks/useDashboardOverview';
+import { useSalesTrend } from './hooks/useSalesTrend';
 
-  const pieOption = useMemo(() => {
-    return {
-      title: { text: '技术栈占比', left: 'center' },
-      tooltip: { trigger: 'item' },
-      series: [
-        {
-          type: 'pie',
-          radius: '60%',
-          data: [
-            { value: 40, name: 'React' },
-            { value: 25, name: 'TypeScript' },
-            { value: 20, name: 'Node.js' },
-            { value: 15, name: 'Other' },
-          ],
-        },
-      ],
-    };
-  }, []);
+export default function DashboardPage() {
+  const { data: overview, loading: overviewLoading } = useDashboardOverview();
+  const { data: salesTrend, loading: salesLoading } = useSalesTrend();
+  const { data: chartsData, loading: chartsLoading } = useDashboardCharts();
+
+  const loading = overviewLoading || salesLoading || chartsLoading;
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={4}>🚀 技术 Dashboard</Title>
+    <div style={{ padding: 6 }}>
+      <PageHeader title="数据看板" />
 
-      <Row gutter={16}>
-        <Col span={12}>
-          <Card>
-            <ReactECharts option={lineOption} />
-          </Card>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} lg={8} xl={4}>
+          <StatCard
+            title="今日销售额"
+            metric={overview?.todaySales ?? { value: 0, compare: { value: 0, direction: 'up', label: '较昨日' } }}
+            prefix="¥"
+            precision={2}
+            loading={loading}
+          />
         </Col>
-
-        <Col span={12}>
-          <Card>
-            <ReactECharts option={pieOption} />
-          </Card>
+        <Col xs={24} sm={12} lg={8} xl={4}>
+          <StatCard
+            title="今日订单数"
+            metric={overview?.todayOrders ?? { value: 0, compare: { value: 0, direction: 'up', label: '较昨日' } }}
+            suffix="单"
+            loading={loading}
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={8} xl={4}>
+          <StatCard
+            title="今日新增用户"
+            metric={overview?.todayNewUsers ?? { value: 0, compare: { value: 0, direction: 'up', label: '较昨日' } }}
+            suffix="人"
+            loading={loading}
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={8} xl={4}>
+          <StatCard
+            title="本月销售额"
+            metric={overview?.monthSales ?? { value: 0, compare: { value: 0, direction: 'up', label: '较上月' } }}
+            prefix="¥"
+            precision={2}
+            loading={loading}
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={8} xl={4}>
+          <StatCard
+            title="支付转化率"
+            metric={overview?.payConversionRate ?? { value: 0, compare: { value: 0, direction: 'up', label: '较上周' } }}
+            suffix="%"
+            precision={1}
+            loading={loading}
+          />
+        </Col>
+        <Col xs={24} sm={12} lg={8} xl={4}>
+          <StatCard
+            title="退款率"
+            metric={overview?.refundRate ?? { value: 0, compare: { value: 0, direction: 'down', label: '较上周' } }}
+            suffix="%"
+            precision={1}
+            loading={loading}
+          />
         </Col>
       </Row>
 
-      <Card style={{ marginTop: 24 }} title="技术能力评估">
-        <Row gutter={[16, 16]}>
-          <Col span={12}>
-            React
-            <Progress percent={90} />
-          </Col>
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col xs={24} xl={12}>
+          <SalesChart data={salesTrend} loading={salesLoading} />
+        </Col>
+        <Col xs={24} xl={12}>
+          <OrderChart data={chartsData.orderTrend} loading={chartsLoading} />
+        </Col>
+      </Row>
 
-          <Col span={12}>
-            TypeScript
-            <Progress percent={85} />
-          </Col>
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col xs={24} xl={12}>
+          <UserChart data={chartsData.userTrend} loading={chartsLoading} />
+        </Col>
+        <Col xs={24} xl={12}>
+          <CategoryPieChart data={chartsData.categoryStats} loading={chartsLoading} />
+        </Col>
+      </Row>
 
-          <Col span={12}>
-            Monorepo
-            <Progress percent={80} />
-          </Col>
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col xs={24} xl={14}>
+          <TopProductTable data={chartsData.topProducts} loading={chartsLoading} />
+        </Col>
+        <Col xs={24} xl={10}>
+          <LowStockAlert data={chartsData.lowStock} loading={chartsLoading} />
+        </Col>
+      </Row>
 
-          <Col span={12}>
-            Node.js
-            <Progress percent={75} />
-          </Col>
-        </Row>
-      </Card>
-
-      <Card style={{ marginTop: 24 }} title="项目架构说明">
-        <p>✔ React + TypeScript 构建前端系统</p>
-        <p>✔ Monorepo 管理多模块结构</p>
-        <p>✔ Axios 封装统一请求层</p>
-        <p>✔ JWT 登录 + 权限控制体系</p>
-        <p>✔ ECharts 数据可视化展示</p>
-      </Card>
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col span={24}>
+          <RealtimePanel data={chartsData.realtime} loading={chartsLoading} />
+        </Col>
+      </Row>
     </div>
   );
 }
